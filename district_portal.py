@@ -5,19 +5,20 @@
 
 import random
 import string
+import datetime
 # import httplib2
 # import json
 # import requests
-# import auth_controller
 
 from flask import Flask, render_template, request, jsonify
 # from flask import redirect, url_for, flash, make_response
 # from flask import session as login_session
 from flask_navigation import Navigation
-# from db_controller import DatabaseController
+from feeds import FeedReader
 
 app = Flask(__name__)
-app.config['DATABASE'] = 'sqlite:///itemcatalog.db'
+# TODO: [Before Release] Change the password in production
+# app.config['DATABASE'] = 'postgresql://welspring:password@localhost/welspring'
 
 # TODO: [Before Release] Update the app secret key to a static guid
 app.config['SECRET_KEY'] = ''.join(
@@ -40,7 +41,6 @@ nav.Bar('top', [
                  {'search_type': 'church'}),
     ]),
 ])
-
 
 
 # ==============================================================================
@@ -78,17 +78,17 @@ def type_locator_controller(search_type):
 
 
 # TODO: [Views] Connector
-@app.route('/connector')
+@app.route('/connect')
 def connector_controller():
-    print('this')
-    return 'hello world'
+    return render_template('connector.html')
 
 
 # TODO: [Views] Devotion
 @app.route('/grow/devotion')
 def devotion_controller():
-    print('this')
-    return 'hello world'
+    returned_feed = FeedReader().start()
+    print(returned_feed)
+    return render_template('devotion.html', devotion=returned_feed)
 
 
 # TODO: [Views] Connector

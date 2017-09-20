@@ -1,11 +1,44 @@
 {% extends "base.html" %}
 
 {% block meta_title %}
-    Home
+    Find Your Lutheran Community
 {% endblock %}
 
 {% block content %}
 
+    <div id="map-wrap" class="results">
+        <div id="map_sidebar" class="results-list">
+            <ul class="list">
+
+            </ul>
+        </div>
+        <div id="map" class="results-map" style="width: 100vw; height: 100vh;"></div>
+    </div>
+
+
+    <script type="text/template" id="result_template">
+        <li class="item" id="##result.id##">
+            <h2>##result.name##</h2>
+            <img src="##result.photo##" alt="##result.name##">
+            <span>##result.address##</span>
+            <span>##result.type##</span>
+        </li>
+    </script>
+
+{% endblock %}
+
+{% block script_include %}
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSCuetIxeeLbIB3D8cpS93Cg8815CUrF4&v=3&libraries=places"></script>
+
+    <script>
+        $( function () {
+
+            {# Kickoff the MapBuilder Class #}
+            var map = new MapBuilder();
+
+        } );
+    </script>
 
 
 {% endblock %}

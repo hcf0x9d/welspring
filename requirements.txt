@@ -1,3 +1,6 @@
+feedparser
+passlib
+itsdangerous
 # cat requirements.txt
 httplib2
 requests

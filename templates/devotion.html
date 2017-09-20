@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block meta_title %}
+    Daily Lutheran Devotion
+{% endblock %}
+
+{% block content %}
+
+    {{ devotion.title }}
+    <br>
+    {{ devotion.subtitle }}
+    <br>
+    {{ devotion.body|safe }}
+
+{% endblock %}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block meta_title %}{% endblock %}</title>
+    <title>{% block meta_title %}{% endblock %} | Welspring</title>
 
     <link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Asap+Condensed:400,600" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.min.css')}}" >
@@ -44,13 +44,14 @@
         </div>
     </section>
 
-    <section class="container body">
-        <main class="js-main col-sm-push-1 col-sm-11">
-            {% block content %}{% endblock %}
-        </main>
-    </section>
+    <main class="container body">
+        {% block content %}{% endblock %}
+    </main>
 
-    <script src="{{url_for('static', filename='js/app.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/partials/jquery-1.7.2.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/partials/locator.js')}}"></script>
+    <script src="{{url_for('static', filename='js/partials/app.js')}}"></script>
+    {% block script_include %}{% endblock %}
 
 </body>
 </html>
