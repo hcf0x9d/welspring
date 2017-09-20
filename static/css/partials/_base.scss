@@ -1,0 +1,44 @@
+html {
+  background: $color-grey-0;
+  color: $color-grey-3;
+  font: normal 300 1em/1.7 $font-slab;
+  min-height: 100vh;
+}
+body {
+  background: $color-grey-0;
+  min-height: 100vh;
+  overflow-y: scroll;
+  padding-bottom: 4em;
+}
+.header, .body {
+  position: relative;
+  z-index: 1;
+}
+.clear:before, .clear:after {
+  content: " ";
+  display: table;
+}
+.clear:after {
+  clear: both;
+}
+.text-pad {
+  padding-top: 5em;
+}
+.avatar {
+  display: block;
+  height: 60vh;
+  margin: auto;
+}
+.footer {
+  bottom: 0;
+  margin-top: 2em;
+  padding: 10px;
+  text-align: center;
+  width: 100%;
+}
+@include media("<sm") {
+  main {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}

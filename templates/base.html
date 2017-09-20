@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block meta_title %}{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Asap+Condensed:400,600" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.min.css')}}" >
+    <link rel="shortcut icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}" />
+
+</head>
+<body>
+    <section class="container header">
+{#        <div class="col-sm-1 hamburger-wrap">#}
+{#            <button class="hamburger hamburger--spin" type="button">#}
+{#                <span class="hamburger-box">#}
+{#                    <span class="hamburger-inner"></span>#}
+{#                </span>#}
+{#            </button>#}
+{#        </div>#}
+        <nav class="col-sm-4">
+            <ul class="">
+                {% for item in nav.top %}
+                <li class=" {{ 'is-active' if item.is_active else '' }}">
+                    <a class="menu-target" href="{{ item.url }}">{{ item.label }}</a>
+
+                    {% if item.items %}
+                    <ul>
+                        {% for child in item.items %}
+                        <li class="{{ 'is-active' if child.is_active else '' }}">
+                            <a class="menu-target" href="{{ child.url }}">{{ child.label }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        <div class="col-sm-7">
+            <h1 class="title"></h1>
+        </div>
+    </section>
+
+    <section class="container body">
+        <main class="js-main col-sm-push-1 col-sm-11">
+            {% block content %}{% endblock %}
+        </main>
+    </section>
+
+    <script src="{{url_for('static', filename='js/app.min.js')}}"></script>
+
+</body>
+</html>
