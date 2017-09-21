@@ -143,7 +143,7 @@ var Venue = function ( obj ) {
             service.nearbySearch( {
                 location : pyrmont,
                 radius   : 40000,
-                keyword  : [ 'WELS', 'ELS', ],
+                keyword  : [ 'WELS', ],
                 // TODO: Replace the type with the url value
                 // either church, school or search for church by default
                 type     : [ 'church', ],

@@ -6,10 +6,22 @@
 
 {% block content %}
 
-{#    HERO with VOTD          #}
-{#    Links to:               #}
-{#    - Locator               #}
-{#    - Daily Devotion        #}
+    <header>
+
+        <h1 class="page-title mod-hero">Welcome to the Welspring</h1>
+
+        <blockquote cite="https://www.biblegateway.com/">
+
+            {# Output the daily devotion with just the text #}
+            <p>{{ ''.join(verse_of_day.body.partition('<br />')[:2])|safe }}</p>
+
+            <footer>
+                <a href="https://www.biblegateway.com/">{{ verse_of_day.subtitle }}</a>
+            </footer>
+
+        </blockquote>
+
+    </header>
 
 {#    Intro to School Locator #}
 

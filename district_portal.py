@@ -66,7 +66,8 @@ def logout_controller():
 # TODO: [Views] Home
 @app.route('/')
 def home_controller():
-    return render_template('index.html')
+    returned_feed = FeedReader('verse').start()
+    return render_template('index.html', verse_of_day=returned_feed)
 
 
 # TODO: [Views] Locator
@@ -91,8 +92,7 @@ def connector_controller():
 # TODO: [Views] Devotion
 @app.route('/grow/devotion')
 def devotion_controller():
-    returned_feed = FeedReader().start()
-    print(returned_feed)
+    returned_feed = FeedReader('devotion').start()
     return render_template('devotion.html', devotion=returned_feed)
 
 
