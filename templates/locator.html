@@ -6,24 +6,11 @@
 
 {% block content %}
 
+    <input type="text" id="mapSearch">
     <div id="map-wrap" class="results">
-        <div id="map_sidebar" class="results-list">
-            <ul class="list">
-
-            </ul>
-        </div>
-        <div id="map" class="results-map" style="width: 100vw; height: 100vh;"></div>
+        <div id="map" class="results-map" style="width: 100%; height: 100vh;"></div>
     </div>
 
-
-    <script type="text/template" id="result_template">
-        <li class="item" id="##result.id##">
-            <h2>##result.name##</h2>
-            <img src="##result.photo##" alt="##result.name##">
-            <span>##result.address##</span>
-            <span>##result.type##</span>
-        </li>
-    </script>
 
 {% endblock %}
 

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block meta_title %}
+    {{ venue.name }}
+{% endblock %}
+
+{% block content %}
+
+    <h1>{{ venue.name }}</h1>
+    <br>
+    <p>{{ venue.adr_address|safe }}</p>
+    <br>
+    <p>{{ venue.website }}</p>
+    <p>{{ venue.formatted_phone_number }}</p>
+
+{% endblock %}
+
+{% block script_include %}
+
+
+{% endblock %}

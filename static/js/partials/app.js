@@ -11,7 +11,7 @@
  * @constructor
  */
 var Venue = function ( obj ) {
-
+    this.id = obj.place_id;
     this.placeLoc = obj.geometry.location;
     this.name = obj.name;
     this.photos = obj.photos;
@@ -27,18 +27,27 @@ var Venue = function ( obj ) {
     MapBuilder = function () {
 
         var map,
+            service,
             infowindow,
             venues = [],
             // Setting a default epicenter for the map
             pyrmont = { lat : 47.7987070, lng : -122.4981920, };
 
-        initMap();
+        geoLocate();
+
+        $( '#mapSearch' ).on( 'change', function () {
+
+            console.log( $( this ).val() )
+            geoCodeSearch( $( this ).val() )
+
+        } );
+
 
         /**
          * Initialization will first look for the user's location with HTML5
          * geolocation
          */
-        function initMap () {
+        function geoLocate () {
 
             // Try HTML5 geolocation.
             if ( navigator.geolocation ) {
@@ -51,14 +60,14 @@ var Venue = function ( obj ) {
                     };
 
                     // Search here
-                    search();
+                    initMap();
 
                 }, function () {
 
                     // Error in location, run the search anyway (on initial
                     // pyrmont value
                     handleLocationError( true, infowindow, map.getCenter() );
-                    search();
+                    initMap();
 
                 } );
 
@@ -67,32 +76,70 @@ var Venue = function ( obj ) {
                 // Browser doesn't support Geolocation, run search on
                 // initial pyrmont value
                 handleLocationError( false, infowindow, map.getCenter() );
-                search();
+                initMap();
 
             }
 
         }
 
+        function geoCodeSearch ( query ) {
+            venues = []
+
+            $.ajax( {
+                url      : '/api/geocode',
+                type     : 'POST',
+                data     : { search : query, },
+                dataType : 'JSON',
+            } ).success( function ( response ) {
+
+                pyrmont = response.response;
+                // map.center = pyrmont;
+                initMap();
+
+            } ).error( function ( response ) {
+
+                console.log( response )
+
+            } );
+
+        }
+
+        function updateMap () {
+
+            // Initialize the map
+            map.center = pyrmont;
+
+            search();
+
+        };
+
         /**
          * Initialize the map and search for nearby locations
          */
-        function search () {
+        function initMap () {
 
             // Initialize the map
             map = new google.maps.Map( document.getElementById( 'map' ), {
-                center : pyrmont,
-                zoom   : 10,
+                center          : pyrmont,
+                zoom            : 10,
+                gestureHandling : "cooperative",
+                // FIXME: gestureHandling is not working
             } );
+
+            service = new google.maps.places.PlacesService( map );
 
             // Initialize the infowindow variable
             infowindow = new google.maps.InfoWindow( {
 
-                maxWidth : 200,
-
             } );
 
+            search();
+
+        };
+
+        function search () {
+
             // Search for the places
-            var service = new google.maps.places.PlacesService( map );
             service.nearbySearch( {
                 location : pyrmont,
                 radius   : 40000,
@@ -103,7 +150,6 @@ var Venue = function ( obj ) {
             }, callback );
 
         }
-
         /**
          * Error in Geolocation
          *
@@ -141,6 +187,8 @@ var Venue = function ( obj ) {
                     createMarker( venue );
 
                 }
+
+                console.log(venues)
 
             }
 
@@ -192,10 +240,40 @@ var Venue = function ( obj ) {
                     '<div>' +
                         '<p>' + type.join( ', ' ) + '</p>' +
                         '<p>' + venue.vicinity + '</p>' +
+                        '<button class="js-map-details" data-id="'+ venue.id + '">' +
+                            'More info' +
+                        '</button>' +
                     '</div>';
 
                 infowindow.setContent( content );
                 infowindow.open( map, this );
+
+                $( '.js-map-details' ).on( 'click', function () {
+
+                    getDetails( $( this ).data( 'id' ) );
+
+                } );
+
+            } );
+
+        }
+
+        function getDetails ( id ) {
+
+            // window.location.href = '/locator/site/' + id;
+            $.ajax( {
+                url      : '/api/place_details',
+                type     : 'POST',
+                data     : { id : id, },
+                dataType : 'JSON',
+            } ).success( function ( obj ) {
+
+                $( 'body' ).append( '<div id="response"></div>' );
+                $( '#response' ).text( JSON.stringify( obj.response ) );
+
+            } ).error( function ( response ) {
+
+                console.log( response )
 
             } );
 
@@ -215,9 +293,14 @@ MapBuilder.prototype.error = function ( response ) {
 
     };
 
-// Initialize the app
-$( function () {
+function getUrlParameter ( name ) {
 
-    controller.init();
+    var regex, results;
 
-} );
+    name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+    regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
+    results = regex.exec( window.location.search );
+    return results === null ? '' : decodeURIComponent( results[1].replace( /\+/g, ' ' ) );
+
+}
+

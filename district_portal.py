@@ -3,13 +3,17 @@
 # ==============================================================================
 # Configuration
 
+import googlemaps
 import random
 import string
+import urllib
+
 import datetime
 # import httplib2
-# import json
+import json
 # import requests
 
+from config import Config
 from flask import Flask, render_template, request, jsonify
 # from flask import redirect, url_for, flash, make_response
 # from flask import session as login_session
@@ -26,6 +30,7 @@ app.config['SECRET_KEY'] = ''.join(
 
 # db = DatabaseController()
 nav = Navigation(app)
+gmaps = googlemaps.Client(key=Config.API_KEYS['googleMaps'])
 
 # Navigation
 # TODO: Work on the navigation
@@ -44,7 +49,7 @@ nav.Bar('top', [
 
 
 # ==============================================================================
-
+# Routes
 
 # TODO: [Views] Login/Authentication (AJAX)
 @app.route('/login')
@@ -95,6 +100,26 @@ def devotion_controller():
 @app.route('/about')
 def about_controller():
     return 'hello world'
+
+# ==============================================================================
+# AJAX Endpoints / API Endpoints
+
+
+@app.route('/api/geocode', methods=['POST'])
+def geocode_query():
+    # Geocoding an address
+    geocode_result = gmaps.geocode(request.form['search'])
+    return json.dumps({'status': 'OK',
+                      'response': geocode_result[0]['geometry']['location']})
+
+
+@app.route('/api/place_details', methods=['POST'])
+def place_detail():
+    details = gmaps.place(request.form['id'])
+    return json.dumps({'status': 'OK',
+                       'response': details['result']})
+
+# ==============================================================================
 
 
 if __name__ == '__main__':

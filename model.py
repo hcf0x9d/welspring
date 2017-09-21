@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 # Configuration ============================================================== #
-from sqlalchemy import Column, Integer, String, Text
+from config import Config
+from sqlalchemy import Column, Integer, String, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
@@ -34,7 +35,22 @@ class User(Base):
     password_hash = Column(String(64))
 
 
+class Venue(Base):
+
+    __tablename__ = 'venue'
+
+    id = Column(Integer, primary_key=True)
+    google_id = Column(String(64), nullable=False, index=True)
+    # Church or school
+    type = Column(String(64), nullable=False, index=True)
+    # Date provide programmatically, not by the DB
+    livestream = Column(Boolean, nullable=True)
+    # String or stringified object
+    service_time = Column(String(250))
+    raw_data = Column(Text)
+
+
 # End of File ================================================================ #
-engine = create_engine('postgresql://welspring:password@localhost/welspring')
+engine = create_engine(Config.DATABASE)
 
 Base.metadata.create_all(engine)
