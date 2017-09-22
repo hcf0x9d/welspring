@@ -86,3 +86,11 @@ class FeedReader:
         # Use the DataBaseController to insert the item into a temporary row
         dbc.create_data_entry(self.feed_type, date_now, title, subtitle, body)
         return
+
+class Twitter:
+
+    def get_tweets(self, account):
+        requests.post('https://api.twitter.com/1.1/statuses/user_timeline'
+                      '.json?screen_name=%s&count=2' % account,
+                      auth=('user', 'pass'))
+        return

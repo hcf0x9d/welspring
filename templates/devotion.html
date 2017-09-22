@@ -5,10 +5,35 @@
 {% endblock %}
 
 {% block content %}
-    {{ devotion.title }}
-    <br>
-    {{ devotion.subtitle }}
-    <br>
-    {{ devotion.body|safe }}
+
+    <header class="hero mod-devotion">
+        <div class="container">
+            <div class="col-md-8">
+                <h1 class="page-title mod-hero">{{ devotion.subtitle }}</h1>
+                <h2 class="page-title mod-helper">{{ devotion.title }}</h2>
+            </div>
+
+        </div>
+
+    </header>
+
+    <article class="container article">
+        <div class="col-md-8">
+            {{ devotion.body|safe }}
+        </div>
+
+        <aside class="col-md-4">
+            <div class="article-aside mod-overlap">
+                <h3 class="headline">Looking for more devotions?</h3>
+                <p>Daily Devotions are brought to you by WELS and What About Jesus.</p>
+                <a href="#" class="btn mod-ghost" target="_blank">Find more</a>
+            </div>
+            <br><br>
+            <div>
+                Oh look, a tweet.
+            </div>
+        </aside>
+    </article>
+
 
 {% endblock %}

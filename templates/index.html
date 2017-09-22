@@ -6,23 +6,51 @@
 
 {% block content %}
 
-    <header>
+    <header class="hero mod-index">
+        <div class="container">
+            <div class="col-md-8">
+                <h1 class="page-title mod-index">Welcome to the Welspring</h1>
+                <p class="page-title mod-helper">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor in ipsa
+                    molestias
+                    nihil
+                    odit
+                    possimus!</p>
 
-        <h1 class="page-title mod-hero">Welcome to the Welspring</h1>
+            </div>
 
-        <blockquote cite="https://www.biblegateway.com/">
-
-            {# Output the daily devotion with just the text #}
-            <p>{{ ''.join(verse_of_day.body.partition('<br />')[:2])|safe }}</p>
-
-            <footer>
-                <a href="https://www.biblegateway.com/">{{ verse_of_day.subtitle }}</a>
-            </footer>
-
-        </blockquote>
+        </div>
 
     </header>
 
+    <main class="container">
+        <div class="col-md-8">
+            <blockquote class="blockquote" cite="https://www.biblegateway.com/">
+
+                {# Output the daily devotion with just the text #}
+                <p>{{ ''.join(verse_of_day.body.partition('<br />')[:2])|safe }}</p>
+
+                <footer>
+                    <a href="https://www.biblegateway.com/">{{ verse_of_day.subtitle }}</a>
+                </footer>
+
+            </blockquote>
+
+            links
+        </div>
+        <div class="col-md-4">
+            <div class="aside mod-overlap mod-marine">
+                <h3 class="headline">We are a community</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut distinctio eos in minus quam.</p>
+                <br>
+                <ul style="padding-left:1.5em;">
+                    <li>Lorem ipsum dolor sit amet.</li>
+                    <li>Accusantium recusandae reiciendis tenetur veniam!</li>
+                    <li>Ea incidunt iusto repudiandae vel.</li>
+                    <li>Doloribus nesciunt quia rem tempora!</li>
+                </ul>
+            </div>
+        </div>
+    </main>
 {#    Intro to School Locator #}
 
 {#    Intro to Church Locator #}

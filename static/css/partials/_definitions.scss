@@ -1,13 +1,33 @@
-$font-fancy:       'Abril Fatface', cursive;
-$font-slab:        'Asap Condensed', sans-serif;
+$font-fancy:       "Abril Fatface", cursive;
+$font-sans:        "Open Sans", sans-serif;
 
-
-$color-white:      #FFF;
-$color-grey-0:     #F7F7F7;
-$color-grey-1:     #C7CAD1;
-$color-grey-3:     #555555;
-$color-grey-4:     #2B2C33;
+$color-white:      #FFFFFF;
+$color-grey-0:     #F6F6FB;
+$color-grey-1:     #A5A5AF;
+$color-grey-3:     #78787F;
+$color-grey-4:     #3E3E41;
 $color-punch:      #4AFFF1;
+
+// Cluster 1
+$color-feather:    #77C9D4;
+$color-marine:     #57BC90;
+$color-forest:     #015249;
+$gradient-1:       linear-gradient(135deg, #77c9d4 1%,#57bc90 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+
+// Cluster 2
+$color-pinky:      #EF57A3;
+$color-peach:      #F8674E;
+$color-mac:        #D84444;
+$gradient-2:       linear-gradient(135deg, #ef57a3 0%,#f8674e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+// Cluster 3
+$color-baby:       #57DDEF;
+$color-dash:       #449FD8;
+$color-country:    #4E8AF8;
+$gradient-3:       linear-gradient(135deg, #57ddef 0%,#4e8af8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+$gradient-4:       linear-gradient(135deg, #3e3e41 0%,#26272a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 
 @mixin border-radius($radius) {
   -webkit-border-radius: $radius;

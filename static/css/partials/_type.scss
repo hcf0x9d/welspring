@@ -1,57 +1,50 @@
-.pageTitle {
-  font: normal 7.0em/1 $font-fancy;
-  margin-bottom: -0.75em;
-  margin-top: 0.25em;
-  text-transform: lowercase;
-}
-.headline {
-  font: normal 700 1.75em/1.4 $font-slab;
-  margin-bottom: 2em;
-  position: relative;
-
-  &:after {
-    border-bottom: 20px solid $color-punch;
-    bottom: -5px;
-    content: '';
-    left: -5px;
-    position: absolute;
-    width: 3em;
-    z-index: -1;
-  }
-}
-.link {
-  background: $color-punch;
-  border-bottom: 2px solid transparent;
-  color: $color-grey-4;
-  position: relative;
+a {
+  color: $color-marine;
   text-decoration: none;
-  transition: all .2s ease;
-  white-space: nowrap;
+  padding-left: 2px;
+  padding-right: 2px;
+  display: inline-block;
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -ms-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
 
-  &:hover, &:focus {
-    background: transparent;
-    border-bottom: 2px solid;
+p a:hover, :focus {
+  //background: $color-marine;
+  //color: $color-white;
+
+
+}
+
+.page-title {
+
+  &.mod-index {
+    font: normal 6.25em/1em $font-fancy;
+    color: $color-white;
+  }
+  &.mod-hero {
+    font: normal 2.625em/1.3em $font-fancy;
+    color: $color-white;
+  }
+  &.mod-helper {
+    font: normal 1.25em/1.5em $font-sans;
+    margin-top: 1em;
   }
 }
-b {
-  font-weight: 700;
+
+.headline {
+  font: normal 700 1.25em/1.625em $font-sans;
+  margin-bottom: 1em;
 }
-p + p {
-  margin-top: 10px;
-}
-.subheadline {
-  font: normal 700 1.5em/1.4 $font-slab;
-  margin-bottom: 0;
-  margin-top: 40px;
-}
-@include media("<sm") {
-  .pageTitle {
-    font-size: 2.125em;
-  }
-  .headline {
-    font-size: 1.125em;
-  }
-  .text-pad {
-    padding-top: 2em;
+
+.blockquote {
+  font: normal 300 1.625em/1.625em $font-sans;
+  margin-bottom: 2em;
+  margin-top: 2em;
+
+  & footer {
+    font-weight: 400;
   }
 }

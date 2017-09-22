@@ -1,41 +1,87 @@
 html {
   background: $color-grey-0;
   color: $color-grey-3;
-  font: normal 300 1em/1.7 $font-slab;
+  font-size: 100%;
   min-height: 100vh;
 }
+
 body {
-  background: $color-grey-0;
+  font: normal 300 1em/1.625em $font-sans;
   min-height: 100vh;
   overflow-y: scroll;
-  padding-bottom: 4em;
 }
-.header, .body {
-  position: relative;
-  z-index: 1;
+
+.base {
+  align-content: flex-start;
+  align-items: stretch;
+  display: flex;
+  justify-content: flex-start;
+  min-height: 100vh;
+
+  & .sidebar {
+    background: $color-white;
+    flex-grow: 0;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  & .stage {
+    flex-grow: 1;
+  }
 }
-.clear:before, .clear:after {
-  content: " ";
-  display: table;
+.article {
+
+  & .article-aside {
+    color: $color-white;
+    background: $color-forest;
+    box-shadow: -10px 30px 100px rgba(0,0,0,0.4);
+    padding: 3em 2em;
+
+    &.mod-overlap {
+      margin-top: -4em;
+      padding-top: 5.625em;
+      padding-bottom: 5.625em;
+    }
+  }
+  & .attachment-thumbnail {
+    display: none;
+  }
+
+  p + p {
+    margin-top: 1.65em;
+  }
+
+  & h3 {
+    font: normal 700 1.25em/1.625em $font-sans;
+    margin-bottom: 1em;
+  }
+
+  & blockquote {
+    font: normal 300 1.625em/1.625em $font-sans;
+    margin-bottom: 1em;
+    margin-top: 1em;
+
+    & strong {
+      font-weight: 400;
+    }
+
+    //&:last-of-type {
+    //  font: normal 1.25em/1.625em $font-sans;
+    //  margin-top: 2em;
+    //}
+  }
+
+  & .avia_textblock {
+    font-size: 0.875em;
+    margin-top: 3em;
+  }
+
+  & .printfriendly {
+    display: none;
+  }
+
 }
-.clear:after {
-  clear: both;
-}
-.text-pad {
-  padding-top: 5em;
-}
-.avatar {
-  display: block;
-  height: 60vh;
-  margin: auto;
-}
-.footer {
-  bottom: 0;
-  margin-top: 2em;
-  padding: 10px;
-  text-align: center;
-  width: 100%;
-}
+
 @include media("<sm") {
   main {
     padding-left: 0 !important;

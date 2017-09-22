@@ -5,9 +5,18 @@
 {% endblock %}
 
 {% block content %}
-
-    {{ venue.name }}
-
-    <form action=""></form>
+    <form action="">
+        {#    Select church or school for this #}
+        {#    Select subtype #}
+        <input id="v_edit_name" type="text" placeholder="Name" value="{{ venue.name }}"><br>
+        <input id="v_edit_url" type="text" placeholder="Website" value="{{ venue.website }}"><br>
+        <input id="v_edit_address" type="text" placeholder="Address" value=""><br>
+        <input id="v_edit_stream" type="text" placeholder="Livestream address" value=""><br>
+        <input id="v_edit_admin" type="text" placeholder="Pastor or Principal name" value=""><br>
+        <input id="v_edit_phone" type="text" placeholder="Phone number" value=""><br>
+        <input id="v_edit_picture" type="text" placeholder="Picture url" value=""><br>
+        <textarea name="v_edit_summary" id="v_edit_summary" cols="30" rows="10" title="Summary"></textarea>
+        <button>Update venue</button>
+    </form>
 
 {% endblock %}

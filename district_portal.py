@@ -35,16 +35,22 @@ gmaps = googlemaps.Client(key=Config.API_KEYS['googleMaps'])
 # Navigation
 # TODO: Work on the navigation
 nav.Bar('top', [
-    nav.Item('Home', 'home_controller', items=[
-        nav.Item('Daily Devotion', 'devotion_controller'),
-        nav.Item('Connector', 'connector_controller'),
-    ]),
-    nav.Item('Locator', 'locator_controller', items=[
-        nav.Item('Schools', 'type_locator_controller',
-                 {'search_type': 'school'}),
-        nav.Item('Churches', 'type_locator_controller',
-                 {'search_type': 'church'}),
-    ]),
+
+    nav.Item('Today\'s devotion', 'devotion_controller',
+             html_attrs={'class': ['main-nav-target', 'mod-devotion'],
+                         'role': 'menuitem'}),
+    nav.Item('Find Schools', 'type_locator_controller',
+             {'search_type': 'school'},
+             html_attrs={'class': ['main-nav-target', 'mod-school'],
+                         'role': 'menuitem'}),
+    nav.Item('Find Churches', 'type_locator_controller',
+             {'search_type': 'church'},
+             html_attrs={'class': ['main-nav-target', 'mod-church'],
+                         'role': 'menuitem'}),
+    nav.Item('Goods & Services', 'connector_controller',
+             html_attrs={'class': ['main-nav-target', 'mod-store'],
+                         'role': 'menuitem'}),
+
 ])
 
 
