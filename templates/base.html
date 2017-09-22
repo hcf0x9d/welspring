@@ -48,6 +48,16 @@
         {% block content %}{% endblock %}
     </main>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes" style="display: none;">
+            {% for category, message in messages %}
+                <li data-type="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     <script src="{{url_for('static', filename='js/partials/jquery-1.7.2.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/partials/locator.js')}}"></script>
     <script src="{{url_for('static', filename='js/partials/app.js')}}"></script>

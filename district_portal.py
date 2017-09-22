@@ -4,31 +4,31 @@
 # Configuration
 
 import googlemaps
-import random
-import string
-import urllib
-
-import datetime
-# import httplib2
 import json
+# import random
+# import string
+# import urllib
+
+# import datetime
+# import httplib2
 # import requests
 
+from functools import wraps
 from config import Config
-from flask import Flask, render_template, request, jsonify
-# from flask import redirect, url_for, flash, make_response
-# from flask import session as login_session
+
+from flask import Flask, render_template, request  # , jsonify
+from flask import redirect, url_for, flash  # , make_response
+from flask import session as login_session
 from flask_navigation import Navigation
 from feeds import FeedReader
+from auth_controller import Authentication
+from db_controller import DatabaseController
 
 app = Flask(__name__)
-# TODO: [Before Release] Change the password in production
-# app.config['DATABASE'] = 'postgresql://welspring:password@localhost/welspring'
+app.config['SECRET_KEY'] = Config.SECRET_KEY
+auth = Authentication()
 
-# TODO: [Before Release] Update the app secret key to a static guid
-app.config['SECRET_KEY'] = ''.join(
-    random.choice(string.ascii_uppercase + string.digits) for x in range(32))
-
-# db = DatabaseController()
+db = DatabaseController()
 nav = Navigation(app)
 gmaps = googlemaps.Client(key=Config.API_KEYS['googleMaps'])
 
@@ -48,13 +48,26 @@ nav.Bar('top', [
 ])
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if login_session.get('user_id') is None:
+            return redirect(url_for('login_controller', next=request.url))
+
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ==============================================================================
 # Routes
 
 # TODO: [Views] Login/Authentication (AJAX)
 @app.route('/login')
 def login_controller():
-    return 'ajaxed'
+    """Create an anti-forgery state token to assist security"""
+    auth.create_session()
+    print(login_session)
+    return render_template('login.html', STATE=login_session['state'])
 
 
 # TODO: [Views] Logout/Authentication (AJAX)
@@ -101,8 +114,64 @@ def devotion_controller():
 def about_controller():
     return 'hello world'
 
+
 # ==============================================================================
-# AJAX Endpoints / API Endpoints
+# Management routes
+
+
+@app.route('/manage/venues')
+@login_required
+def venue_manager():
+    venues = ''
+    return render_template('admin/venues.html', venues=venues)
+
+
+@app.route('/manage/venues/<string:venue_slug>')
+@login_required
+def venue_editor(venue_slug):
+    venue = db.read_venue(venue_slug)
+    return render_template('admin/venue.html', venue=venue)
+
+# AJAX routes (CRUD)
+
+
+@app.route('/create/venue', methods=['POST'])
+@login_required
+def venue_creator():
+    # TODO: Create a venue script
+    # Name and website are passed in
+    db.create_venue(request.form)
+    # db.add_item(request.form, login_session.get('user_id'))
+    return json.dumps({'status': 'OK',
+                       'post': request.form})
+
+
+@app.route('/update/venue', methods=['POST'])
+@login_required
+def venue_updater():
+    # TODO: Update a venue script
+    return 'Update a venue'
+
+
+@app.route('/delete/venue', methods=['POST'])
+@login_required
+def venue_deleter():
+    # TODO: Delete a venue script
+    return 'Delete a venue'
+
+
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+    return auth.google_connection()
+
+
+@app.route('/gdisconnect')
+def gdisconnect(self):
+    """Google Plus API disconnect/logout route"""
+    return auth.logout()
+
+# ==============================================================================
+# API Endpoints
 
 
 @app.route('/api/geocode', methods=['POST'])

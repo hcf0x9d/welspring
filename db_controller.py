@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from model import Base, Data
+from model import Base, Data, User, Venue, VenueSubType, VenueType
 
 engine = create_engine('postgresql://welspring:password@localhost:5432'
                        '/welspring')
@@ -21,10 +21,35 @@ class DatabaseController:
         session.commit()
         return
 
-    def create_data_entry(self, type, date, title, subtitle, body):
-        entry = Data(type=type, date=date, title=title,
+    def read_user(self, auth_session):
+        try:
+            user = session.query(User)\
+                .filter_by(email=auth_session['email']).one()
+            return user
+        except:
+            self.create_user(auth_session)
+            return session.query(User)\
+                .filter_by(email=auth_session['email']).one()
+
+    @staticmethod
+    def create_data_entry(entry_type, date, title, subtitle, body):
+        entry = Data(type=entry_type, date=date, title=title,
                      subtitle=subtitle,
                      body=body)
         session.add(entry)
         session.commit()
         return
+
+    @staticmethod
+    def create_venue(obj):
+        new_venue = Venue(name=obj['name'], slug=obj['slug'],
+                         website=obj['website'])
+        session.add(new_venue)
+        session.commit()
+        return
+
+    @staticmethod
+    def read_venue(slug):
+        venue = session.query(Venue) \
+            .filter_by(slug=slug).one()
+        return venue

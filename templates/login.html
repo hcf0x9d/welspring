@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Sign In to the Application</title>
+    <link rel="stylesheet" href="/static/css/style.min.css">
+
+    {# TODO: Finish dealing with script concatenation #}
+    <script src="/static/js/partials/app.js"></script>
+    <script src="/static/js/partials/jquery-1.7.2.min.js"></script>
+    <script src="//apis.google.com/js/client:platform.js?onload=start"></script>
+
+</head>
+<body>
+
+    <main class="col-sm-4 col-sm-push-4" style="text-align: center;margin-top: 60px;">
+        <h1 class="title">Asset Catalog</h1>
+
+        <p class="subtitle">You must login using Google to continue.</p>
+        <br><br>
+        <div class="g-signin2" id="signinButton" style="display:inline-block;">Sign in with Google</div>
+        <div id="result"></div>
+    </main>
+
+    <script>
+        var signinbutton = document.getElementById( 'signinButton' );
+
+        gapi.load( 'auth2', function () {
+            auth2 = gapi.auth2.init( {
+                client_id: '530059986349-lcvlabr7u7uig58vsimpioj00t17vlit.apps.googleusercontent.com'
+            } );
+        } );
+
+        signinbutton.addEventListener( 'click', function () {
+            auth2.grantOfflineAccess( { 'redirect_uri': 'postmessage' } ).then( signInCallback );
+        } )
+
+        function signInCallback( json ) {
+            var authResult = json;
+
+            if ( authResult[ 'code' ] ) {
+                $.ajax( {
+                    type: 'POST',
+                    url: '/gconnect?state={{STATE}}',
+                    processData: false,
+                    data: authResult['code'],
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function( result ) {
+                        if( result ){
+                            setTimeout( function() {
+
+                                if ( window.location.search ) {
+                                    // We previously had attempted visiting another page, go back
+                                    var url = parseQueryString()[ 'next' ]
+                                    window.location.href = decodeURIComponent( url );
+
+                                } else {
+
+                                    window.location.href="/";
+
+                                }
+
+                            }, 600 );
+
+                        } else if ( authResult[ 'error' ] ) {
+
+                            console.log( 'Something\'s gone horribly wrong: ' + authResult[ 'error' ] )
+
+                        } else {
+                            console.log(result)
+                            $( '#result' ).html( 'Failed to make a ' +
+                                'server-side call. Check the configuration console.' )
+                        }
+
+                    }
+                });
+            }
+    }
+    </script>
+
+</body>
+</html>

@@ -11,6 +11,7 @@
  * @constructor
  */
 var Venue = function ( obj ) {
+
     this.id = obj.place_id;
     this.placeLoc = obj.geometry.location;
     this.name = obj.name;
@@ -37,11 +38,10 @@ var Venue = function ( obj ) {
 
         $( '#mapSearch' ).on( 'change', function () {
 
-            console.log( $( this ).val() )
-            geoCodeSearch( $( this ).val() )
+            console.log( $( this ).val() );
+            geoCodeSearch( $( this ).val() );
 
         } );
-
 
         /**
          * Initialization will first look for the user's location with HTML5
@@ -83,7 +83,8 @@ var Venue = function ( obj ) {
         }
 
         function geoCodeSearch ( query ) {
-            venues = []
+
+            venues = [];
 
             $.ajax( {
                 url      : '/api/geocode',
@@ -103,15 +104,6 @@ var Venue = function ( obj ) {
             } );
 
         }
-
-        function updateMap () {
-
-            // Initialize the map
-            map.center = pyrmont;
-
-            search();
-
-        };
 
         /**
          * Initialize the map and search for nearby locations
@@ -135,7 +127,7 @@ var Venue = function ( obj ) {
 
             search();
 
-        };
+        }
 
         function search () {
 
@@ -143,7 +135,7 @@ var Venue = function ( obj ) {
             service.nearbySearch( {
                 location : pyrmont,
                 radius   : 40000,
-                keyword  : [ 'WELS', ],
+                keyword  :'WELS Church',
                 // TODO: Replace the type with the url value
                 // either church, school or search for church by default
                 type     : [ 'church', ],
@@ -188,7 +180,7 @@ var Venue = function ( obj ) {
 
                 }
 
-                console.log(venues)
+                console.log( venues )
 
             }
 
@@ -240,7 +232,7 @@ var Venue = function ( obj ) {
                     '<div>' +
                         '<p>' + type.join( ', ' ) + '</p>' +
                         '<p>' + venue.vicinity + '</p>' +
-                        '<button class="js-map-details" data-id="'+ venue.id + '">' +
+                        '<button class="js-map-details" data-id="' + venue.id + '">' +
                             'More info' +
                         '</button>' +
                     '</div>';
@@ -293,14 +285,144 @@ MapBuilder.prototype.error = function ( response ) {
 
     };
 
-function getUrlParameter ( name ) {
+// function getUrlParameter ( name ) {
+//
+//     var regex, results;
+//
+//     name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
+//     regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
+//     results = regex.exec( window.location.search );
+//     return results === null ? '' : decodeURIComponent( results[1].replace( /\+/g, ' ' ) );
+//
+// }
 
-    var regex, results;
 
-    name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
-    regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-    results = regex.exec( window.location.search );
-    return results === null ? '' : decodeURIComponent( results[1].replace( /\+/g, ' ' ) );
+/**
+ * Add New Item Class Constructor
+ *
+ * Instead of doing a post to open a window for adding a new item to a category
+ * we will pop a lightbox for the user to add their input, then post that
+ * information to the DB and refresh the same category view (reload)
+ *
+ * @constructor
+ */
+function AddNewVenue () {
+
+    var _this = this;
+
+    _this.startButton = document.querySelector( '.js-new-venue' );
+
+    /**
+     * All Add New Item events can be handled here
+     */
+    _this.handleEvents = function () {
+
+        // Be able to open the lightbox
+        _this.startButton.addEventListener( 'click', function () {
+
+            var action = 'open';
+
+            _this.popWrap( action );
+
+        } );
+
+    };
+
+    /**
+     * Lightbox handling events
+     *
+     * @param action - String :: what do you want to do?
+     */
+    _this.popWrap = function ( action ) {
+
+        if ( action === 'destroy' ) {
+
+            // Destroy the modal
+            $( _this.inputWrap ).slideUp( 250 );
+
+        } else {
+
+            swal( {
+                title : 'Name your category',
+                type : 'question',
+                html : '<input type="text" class="swal2-input" ' +
+                                'placeholder="Church or School name" ' +
+                                'id="venue_name">' +
+                    '<input type="text" class="swal2-input" ' +
+                                'placeholder="Website" ' +
+                                'id="venue_website">',
+                showCancelButton : true,
+                confirmButtonText : 'Submit',
+                showLoaderOnConfirm : true,
+                preConfirm : function ( text ) {
+
+                    return new Promise ( function ( resolve, reject ) {
+
+                        resolve( {
+
+                            name    : $( '#venue_name' ).val(),
+                            slug    : $( '#venue_name' ).val()
+                                .replace( /[^A-Za-z0-9]+/g, "-" ).toLowerCase(),
+                            website : $( '#venue_website' ).val(),
+
+                        } );
+
+                    } )
+
+                },
+                allowOutsideClick : false,
+            } ).then( function ( result ) {
+
+                $.ajax( {
+                    url  : '/create/venue',
+                    type : 'POST',
+                    data : result,
+                } )
+                .done( function ( response ) {
+
+                    response = JSON.parse( response );
+
+                    window.location.href = '/manage/venues/' + response.post.slug
+
+                } )
+                .fail( function () {
+
+                    swal( 'Oops...', 'Something went wrong with ajax!', 'error' );
+
+                } );
+
+            } );
+
+        }
+
+    };
+
+    _this.submitCategory = function ( ) {
+
+        var obj = {};
+
+        obj.name = $( '#newCategoryNameInput' ).val();
+        obj.slug = obj.name.replace( /[^A-Za-z0-9]+/g, "-" ).toLowerCase()
+
+        $.ajax( {
+            url  : '/addCategory',
+            type : 'POST',
+            data : obj,
+        } )
+        .done( function () {
+
+            window.location.reload();
+
+        } )
+        .fail( function () {
+
+            swal( 'Oops...', 'Something went wrong with ajax!', 'error' );
+
+        } );
+
+    };
+
+    // Kick off the handler
+    _this.handleEvents();
 
 }
-

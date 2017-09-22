@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block meta_title %}
+    Daily Lutheran Devotion
+{% endblock %}
+
+{% block content %}
+
+    <div class="col-sm-12">
+        <ul class="venueTiles">
+        {% for venue in venues %}
+            <li class="tile col-sm-2">
+                <a class="tile-target col-sm-12" href="{{ url_for('.venue_editor', venue_slug=venue.slug) }}" >
+                    <span class="text">{{ venue.name }}</span>
+                </a>
+            </li>
+        {% endfor %}
+
+            <li class="tile col-sm-2">
+                <button class="tile-target col-sm-12 mod-new js-new-venue fa fa-3x fa-plus-square-o">ADD</button>
+            </li>
+        </ul>
+    </div>
+
+    <div style="display: none">
+    <form id="addVenueModal">
+
+    </form>
+    </div>
+
+{% endblock %}
+
+{% block script_include %}
+    <script src="/static/js/partials/sweetalert2.min.js"></script>
+    <script>
+        var newVenue = new AddNewVenue();
+    </script>
+{% endblock %}
