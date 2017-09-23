@@ -948,6 +948,11 @@ a {
   -o-transition: all 0.2s ease;
   transition: all 0.2s ease; }
 
+.link-offsite:after {
+  content: '\f08e';
+  font: normal 0.75em/1 FontAwesome, sans-serif;
+  margin-left: 0.25em; }
+
 .page-title.mod-index {
   font: normal 6.25em/1em "Abril Fatface", cursive;
   color: #FFFFFF; }
@@ -959,7 +964,7 @@ a {
   margin-top: 1em; }
 
 .headline {
-  font: normal 700 1.25em/1.625em "Open Sans", sans-serif;
+  font: normal 400 1.625em/1.625em "Open Sans", sans-serif;
   margin-bottom: 1em; }
 
 .blockquote {
@@ -978,6 +983,8 @@ a {
   padding-top: 6em; }
   .hero.mod-index {
     background: linear-gradient(135deg, #57ddef 0%, #4e8af8 100%); }
+    .hero.mod-index .page-title.mod-helper {
+      color: #FFFFFF; }
   .hero.mod-devotion {
     background: linear-gradient(135deg, #77c9d4 1%, #57bc90 100%); }
     .hero.mod-devotion .page-title.mod-helper {
@@ -1045,6 +1052,14 @@ a {
     .main-nav-target.active.mod-store {
       background: linear-gradient(135deg, #3e3e41 0%, #26272a 100%); }
 
+.page-footer {
+  padding-top: 4em;
+  padding-bottom: 4em;
+  text-align: center;
+  margin-top: 5em;
+  color: #A5A5AF;
+  border-top: 1px solid #A5A5AF; }
+
 .btn {
   display: inline-block;
   padding: 10px 20px;
@@ -1052,12 +1067,16 @@ a {
   margin-top: 2em;
   line-height: 1em; }
   .btn.mod-ghost {
-    border: 1px solid; }
+    border: 1px solid;
+    text-align: center; }
 
 .aside {
   box-shadow: -10px 30px 100px rgba(0, 0, 0, 0.4);
-  padding: 3em 2em;
+  padding: 2em 2em;
+  margin-top: 2em;
   color: #FFFFFF; }
+  .aside.mod-charcoal {
+    background: #3E3E41; }
   .aside.mod-mac {
     background: #D84444; }
   .aside.mod-marine {
@@ -1066,6 +1085,24 @@ a {
     margin-top: -4em;
     padding-top: 6.25em;
     padding-bottom: 6.25em; }
+  .aside.mod-boxed {
+    box-shadow: none;
+    border: 4px solid #A5A5AF;
+    color: #3E3E41; }
+
+.social-feed {
+  list-style-type: none;
+  padding: 0;
+  margin: 2em 0 0; }
+  .social-feed .item {
+    text-align: center;
+    padding: 3em 2em;
+    color: #00aced; }
+    .social-feed .item-icon {
+      font-size: 3em;
+      margin-bottom: 0.5em; }
+    .social-feed .item-text {
+      font: normal 400 1.25em/1.65em "Open Sans", sans-serif; }
 
 body.swal2-shown {
   overflow-y: hidden; }

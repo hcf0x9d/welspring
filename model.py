@@ -2,7 +2,7 @@
 
 # Configuration ============================================================== #
 from config import Config
-from sqlalchemy import Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -114,6 +114,7 @@ class Venue(Base):
     admin_name = Column(String(250))
     # Key/Value pairs
     filters = Column(String(250))
+    active = Column(Boolean)
     raw_data = Column(Text)
 
     @property

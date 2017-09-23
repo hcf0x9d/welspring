@@ -38,7 +38,7 @@
             links
         </div>
         <div class="col-md-4">
-            <div class="aside mod-overlap mod-marine">
+            <div class="aside mod-boxed">
                 <h3 class="headline">We are a community</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut distinctio eos in minus quam.</p>
                 <br>
@@ -49,6 +49,18 @@
                     <li>Doloribus nesciunt quia rem tempora!</li>
                 </ul>
             </div>
+            <ul class="social-feed">
+            {% for tweet in tweets %}
+                <li class="item">
+                    <i class="fa fa-twitter item-icon"></i>
+                    <p class="item-text">{{ tweet['text']|safe }}</p>
+{#                    {{ tweet['created_at'] }}<br>#}
+{#                    favs: {{ tweet['favorite_count'] }}<br>#}
+{#                    retweets: {{ tweet['retweet_count'] }}#}
+                </li>
+            {% endfor %}
+            </ul>
+
         </div>
     </main>
 {#    Intro to School Locator #}

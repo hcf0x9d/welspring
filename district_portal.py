@@ -20,14 +20,14 @@ from flask import Flask, render_template, request  # , jsonify
 from flask import redirect, url_for, flash  # , make_response
 from flask import session as login_session
 from flask_navigation import Navigation
-from feeds import FeedReader
+from feeds import FeedReader, Twitter
 from auth_controller import Authentication
 from db_controller import DatabaseController
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = Config.SECRET_KEY
 auth = Authentication()
-
+twitter = Twitter()
 db = DatabaseController()
 nav = Navigation(app)
 gmaps = googlemaps.Client(key=Config.API_KEYS['googleMaps'])
@@ -86,7 +86,10 @@ def logout_controller():
 @app.route('/')
 def home_controller():
     returned_feed = FeedReader('verse').start()
-    return render_template('index.html', verse_of_day=returned_feed)
+    t = twitter.get_tweets('welstweets', 2)
+
+    return render_template('index.html', verse_of_day=returned_feed,
+                           tweets=t)
 
 
 # TODO: [Views] Locator
@@ -112,7 +115,8 @@ def connector_controller():
 @app.route('/grow/devotion')
 def devotion_controller():
     returned_feed = FeedReader('devotion').start()
-    return render_template('devotion.html', devotion=returned_feed)
+    t = twitter.get_tweets('welstweets', 2)
+    return render_template('devotion.html', devotion=returned_feed, tweets=t)
 
 
 # TODO: [Views] Connector

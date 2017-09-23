@@ -9,3 +9,4 @@ oauth2client
 sqlalchemy
 flask_navigation
 googlemaps
+twitter

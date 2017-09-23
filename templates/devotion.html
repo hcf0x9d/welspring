@@ -29,9 +29,17 @@
                 <a href="#" class="btn mod-ghost" target="_blank">Find more</a>
             </div>
             <br><br>
-            <div>
-                Oh look, a tweet.
-            </div>
+            <ul class="social-feed">
+            {% for tweet in tweets %}
+                <li class="item">
+                    <i class="fa fa-twitter item-icon"></i>
+                    <p class="item-text">{{ tweet['text']|safe }}</p>
+{#                    {{ tweet['created_at'] }}<br>#}
+{#                    favs: {{ tweet['favorite_count'] }}<br>#}
+{#                    retweets: {{ tweet['retweet_count'] }}#}
+                </li>
+            {% endfor %}
+            </ul>
         </aside>
     </article>
 

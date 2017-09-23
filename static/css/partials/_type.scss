@@ -11,6 +11,14 @@ a {
   transition: all 0.2s ease;
 }
 
+.link-offsite {
+  &:after {
+    content: '\f08e';
+    font: normal 0.75em/1 FontAwesome, sans-serif;
+    margin-left: 0.25em;
+  }
+}
+
 p a:hover, :focus {
   //background: $color-marine;
   //color: $color-white;
@@ -35,7 +43,7 @@ p a:hover, :focus {
 }
 
 .headline {
-  font: normal 700 1.25em/1.625em $font-sans;
+  font: normal 400 1.625em/1.625em $font-sans;
   margin-bottom: 1em;
 }
 

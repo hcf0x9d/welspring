@@ -1,6 +1,8 @@
 import feedparser
 import datetime
 
+from twitter import *
+from config import Config
 from model import Data
 from db_controller import session, DatabaseController
 
@@ -9,6 +11,12 @@ verse_feed = "http://www.biblegateway.com/usage/votd/rss/votd.rdf?31"
 now = datetime.datetime.now()
 date_now = now.strftime("%Y-%m-%d")
 dbc = DatabaseController()
+config = Config()
+
+twitter_api = Twitter(auth=OAuth(config.API_KEYS['twitter']['A_TOKEN'],
+                                 config.API_KEYS['twitter']['A_SECRET'],
+                                 config.API_KEYS['twitter']['C_KEY'],
+                                 config.API_KEYS['twitter']['C_SECRET']))
 
 
 class FeedReader:
@@ -22,7 +30,18 @@ class FeedReader:
         :return: Feed object from the database or online
         """
         if self.check_date() is not True:
-            feed = self.fetch_feed()
+            feed = {}
+            obj = self.fetch_feed()
+
+            if self.feed_type == 'devotion':
+                feed['title'] = obj.entries[0]['title']
+                feed['subtitle'] = obj.entries[0]['subtitle']
+                feed['body'] = obj.entries[0].content[0]['value']
+            else:
+                feed['title'] = 'Verse of the day'
+                feed['subtitle'] = obj.entries[0]['title']
+                feed['body'] = obj.entries[0]['content'][0]['value']
+
             self.store_feed(feed)
             return feed
         else:
@@ -74,23 +93,14 @@ class FeedReader:
         :param obj: feed object to parse and store
         :return:
         """
-        if self.feed_type == 'devotion':
-            title = obj.entries[0]['title']
-            subtitle = obj.entries[0]['subtitle']
-            body = obj.entries[0].content[0]['value']
-        else:
-            title = 'Verse of the day'
-            subtitle = obj.entries[0]['title']
-            body = obj.entries[0]['content'][0]['value']
-
         # Use the DataBaseController to insert the item into a temporary row
-        dbc.create_data_entry(self.feed_type, date_now, title, subtitle, body)
+        dbc.create_data_entry(self.feed_type, date_now, obj['title'],
+                              obj['subtitle'], obj['body'])
         return
+
 
 class Twitter:
 
-    def get_tweets(self, account):
-        requests.post('https://api.twitter.com/1.1/statuses/user_timeline'
-                      '.json?screen_name=%s&count=2' % account,
-                      auth=('user', 'pass'))
-        return
+    def get_tweets(self, account, count):
+        t = twitter_api.statuses.user_timeline(screen_name=account, count=count)
+        return t

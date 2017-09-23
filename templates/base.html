@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block meta_title %}{% endblock %} | Welspring</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Abril+Fatface|Open+Sans:300,400" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.min.css')}}" >
     <link rel="shortcut icon" type="image/x-icon" href="{{url_for('static', filename='favicon.ico')}}" />
@@ -37,8 +37,9 @@
         <div class="stage">
             {% block content %}{% endblock %}
 
-            <footer>
-                This is my footer
+            <footer class="page-footer">
+                #TheTruthIsPublicDomain | a passion project by
+                <a href="https://www.github.com/jfukura" class="link-offsite" target="_blank">www.github.com/jfukura</a>
             </footer>
         </div>
 
