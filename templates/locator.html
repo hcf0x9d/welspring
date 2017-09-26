@@ -11,6 +11,31 @@
         <div id="map" class="results-map" style="width: 100%; height: 100vh;"></div>
     </div>
 
+    <article class="location-detail">
+        <header class="location-header">
+        {# Header background is image from web #}
+            <h1 id="locationName" class="headline"></h1>
+            <p id="locationAddress" class="address"></p>
+            <button class="location-detail-close">&times;</button>
+        </header>
+        <div class="location-body">
+            <div class="location-body-main">
+                <p id="locationSummary"></p>
+
+                <a id="locationLinkBtn" href="#" class="btn">Go to website</a>
+                <a id="locationDirectionsBtn" href="#" class="btn">Get directions</a>
+            </div>
+            <div class="location-body-aside">
+                <h2 class="subheadline">Contact</h2>
+                <p id="locationWebsite"><a href="#"></a></p>
+                <p id="locationPhone"></p>
+                <p id="locationAdmin"></p>
+                <h2 class="subheadline">Service Times</h2>
+                <span id="serviceTimes"></span>
+            </div>
+        </div>
+    </article>
+
 
 {% endblock %}
 

@@ -5,8 +5,7 @@ import httplib2
 import json
 import requests
 
-from functools import wraps
-from flask import render_template, request
+from flask import request
 from flask import redirect, url_for, flash, make_response
 from flask import session as login_session
 from db_controller import DatabaseController
@@ -22,6 +21,7 @@ token_info = ''
 
 
 class Authentication:
+
     @staticmethod
     def google_connection():
         # Validate state token

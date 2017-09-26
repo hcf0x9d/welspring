@@ -23,10 +23,13 @@
     </header>
 
     <main class="container">
-        <div class="col-md-8">
+
+        {# MAIN CONTENT #}
+        <article class="col-md-8">
+
+            {# VERSE OF THE DAY #}
             <blockquote class="blockquote" cite="https://www.biblegateway.com/">
 
-                {# Output the daily devotion with just the text #}
                 <p>{{ ''.join(verse_of_day.body.partition('<br />')[:2])|safe }}</p>
 
                 <footer>
@@ -35,8 +38,53 @@
 
             </blockquote>
 
-            links
-        </div>
+            <section class="row">
+                <div class="col-md-6">
+                    <div class="card mod-bg-img" style="background-image:url('/static/img/bible.jpg')">
+                        <div class="content">
+                            <i class="fa fa-map-marker icon"></i>
+                            <h2 class="headline">Find a Church family</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis distinctio doloribus ea
+                                in officia quae.</p>
+                            <a href="{{ url_for('type_locator_controller', search_type='church') }}" class="btn
+                            mod-ghost mod-white">Get started</a>
+                        </div>
+                        <div class="overlay mod-dash"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mod-bg-img" style="background-image:url('/static/img/classroom.jpg')">
+                        <div class="content">
+                            <i class="fa fa-institution icon"></i>
+                            <h2 class="headline">Find a Lutheran School</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis distinctio doloribus ea
+                                in officia quae.</p>
+                            <a href="{{ url_for('type_locator_controller', search_type='school') }}" class="btn
+                            mod-ghost mod-white">Get started</a>
+                        </div>
+                        <div class="overlay mod-mac"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="row">
+                <header class="col-md-8">
+                    <br><br>
+                    <h1 class="headline">What we believe</h1>
+                </header>
+                <div class="col-md-12">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aliquam aliquid consequuntur
+                        cupiditate distinctio exercitationem facilis in iste iure, maiores minus nam perspiciatis quod, rem
+                        repudiandae sit temporibus, tenetur voluptatum. Animi consequuntur, esse eveniet exercitationem
+                        expedita facere magnam molestiae quibusdam.</p>
+                    <p>Alias aliquam assumenda autem, cum cupiditate earum facilis in natus nesciunt nihil numquam, odit
+                        quas quia sapiente similique sit, sunt tempora velit? Alias amet architecto deserunt, illo incidunt
+                        laborum magni optio porro quasi quidem quisquam tempora tempore, vel vitae voluptas.</p>
+                </div>
+            </section>
+        </article>
+
+        {# SIDEBAR #}
         <div class="col-md-4">
             <div class="aside mod-boxed">
                 <h3 class="headline">We are a community</h3>
@@ -60,7 +108,6 @@
                 </li>
             {% endfor %}
             </ul>
-
         </div>
     </main>
 {#    Intro to School Locator #}

@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+import re
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from model import Base, Data, User, Venue, VenueSubType, VenueType
@@ -41,9 +43,26 @@ class DatabaseController:
         return
 
     @staticmethod
+    def read_venue_list():
+        venues = session.query(Venue).all()
+        return venues
+
+    @staticmethod
+    def read_venue_list_by_search(state):
+        venues = session.query(Venue).filter_by(state=state).all()
+        return venues
+
+    @staticmethod
     def create_venue(obj):
-        new_venue = Venue(name=obj['name'], slug=obj['slug'],
-                         website=obj['website'])
+        new_venue = Venue(name=obj['name'],
+                          slug=obj['slug'],
+                          website=obj['website'],
+                          address=obj['address'],
+                          google_id=obj['google_id'],
+                          location=obj['location'],
+                          phone=obj['phone']
+                          )
+
         session.add(new_venue)
         session.commit()
         return
@@ -53,3 +72,31 @@ class DatabaseController:
         venue = session.query(Venue) \
             .filter_by(slug=slug).one()
         return venue
+
+    @staticmethod
+    def read_venue_subtypes(venue_type):
+        subtypes = session.query(VenueSubType)\
+            .filter_by(venue_type_link=venue_type).all()
+        return subtypes
+
+    @staticmethod
+    def update_venue(obj):
+        venue = session.query(Venue) \
+            .filter_by(slug=obj['v_edit_slug']).one()
+
+        venue.name = obj['v_edit_name']
+        venue.slug = re.sub('[^A-Za-z0-9]+', '-', obj['v_edit_name']).lower()
+        venue.website = obj['v_edit_url']
+        venue.admin_name = obj['v_edit_admin']
+        venue.livestream = obj['v_edit_stream']
+        venue.type_id = int(obj['v_edit_type'])
+        if obj['v_edit_subtype'] != '':
+            venue.sub_type_id = int(obj['v_edit_subtype'])
+        # venue.service_time = obj['v_edit_service']
+        venue.summary = obj['v_edit_summary'].strip()
+        venue.picture = obj['v_edit_picture']
+        venue.phone = obj['v_edit_phone']
+        venue.address = obj['v_edit_address'].strip()
+
+        session.commit()
+        return

@@ -1,10 +1,6 @@
-{% extends "base.html" %}
+{% extends "admin/admin.html" %}
 
-{% block meta_title %}
-    Daily Lutheran Devotion
-{% endblock %}
-
-{% block content %}
+{% block admin_view %}
 
     <div class="col-sm-12">
         <ul class="venueTiles">
@@ -16,21 +12,20 @@
             </li>
         {% endfor %}
 
-            <li class="tile col-sm-2">
-                <button class="tile-target col-sm-12 mod-new js-new-venue fa fa-3x fa-plus-square-o">ADD</button>
+            <li class="tile col-sm-4">
+                <input type="text" class="" placeholder="Church or School name" id="venue_name" style="width: 100%;">
+                type the name, select the result and hit enter
             </li>
         </ul>
     </div>
 
-    <div style="display: none">
-    <form id="addVenueModal">
-
-    </form>
-    </div>
+    <div id="map" style="width: 100%;height: 100vh;"></div>
 
 {% endblock %}
 
 {% block script_include %}
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKp2Onc9BNf6JnTP_1nRTxVY0mDov1Nhg&v=3&libraries=places"></script>
     <script src="/static/js/partials/sweetalert2.min.js"></script>
     <script>
         var newVenue = new AddNewVenue();

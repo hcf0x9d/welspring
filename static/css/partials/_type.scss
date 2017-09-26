@@ -11,6 +11,10 @@ a {
   transition: all 0.2s ease;
 }
 
+p + p {
+    margin-top: 1.65em;
+  }
+
 .link-offsite {
   &:after {
     content: '\f08e';

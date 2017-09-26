@@ -84,6 +84,8 @@ class VenueSubType(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    venue_type_link = Column(Integer, ForeignKey('venue_type.id'))
+    venue_type = relationship(VenueType)
 
 
 class Venue(Base):
@@ -97,6 +99,7 @@ class Venue(Base):
     website = Column(String(250))
     # lat/lng string from google
     location = Column(String(250))
+    phone = Column(String(8))
     # HTML entry with spans like Google's API
     address = Column(String(250))
     type_id = Column(Integer, ForeignKey('venue_type.id'))
@@ -114,6 +117,7 @@ class Venue(Base):
     admin_name = Column(String(250))
     # Key/Value pairs
     filters = Column(String(250))
+    state = Column(String(250))
     active = Column(Boolean)
     raw_data = Column(Text)
 
@@ -121,7 +125,21 @@ class Venue(Base):
     def serialize(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'slug': self.slug,
+            'google_id': self.google_id,
+            'website': self.website,
+            'location': self.location,
+            'phone': self.phone,
+            'address': self.address,
+            'type_id': self.type_id,
+            'sub_type_id': self.sub_type_id,
+            'livestream': self.livestream,
+            'service_time': self.service_time,
+            'summary': self.summary,
+            'picture': self.picture,
+            'admin_name': self.admin_name,
+            'state': self.state
         }
 
 

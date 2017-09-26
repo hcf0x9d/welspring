@@ -1,22 +1,149 @@
-{% extends "base.html" %}
+{% extends "admin/admin.html" %}
 
-{% block meta_title %}
-    Daily Lutheran Devotion
+{% block admin_view %}
+    {#    Select church or school for this #}
+    {#    Select subtype #}
+    <div class="container">
+        <form id="venue_update_form" class="col-sm-12">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <input class="js-radio venue-input radio-button"
+                               type="radio"
+                               name="v_edit_type"
+                               value="2"
+                               id="v_edit_type_church"
+                                {{ cch_chkd }}>
+                        <label class="radio-button-label" for="v_edit_type_church">Church</label>
+                    </div>
+                    <div class="col-sm-1" style="line-height:3.5em">
+                        OR
+                    </div>
+                    <div class="col-sm-5">
+
+                        <input class="js-radio venue-input radio-button"
+                               type="radio"
+                               name="v_edit_type"
+                               value="1"
+                               id="v_edit_type_school"
+                                {{ sch_chkd }}>
+                        <label class="radio-button-label" for="v_edit_type_school">School</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <select class="venue-input" name="v_edit_subtype" id="v_edit_subtype">
+
+                        <option value="">Select an option</option>
+                        {{ subtype_dd|safe }}
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input class="venue-input"
+                               name="v_edit_name"
+                               id="v_edit_name"
+                               type="text"
+                               placeholder="Name"
+                               value="{{ venue.name }}">
+
+                        <input class="venue-input"
+                               name="v_edit_slug"
+                               id="v_edit_slug"
+                               type="hidden"
+                               value="{{ venue.slug }}">
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <input class="venue-input"
+                               name="v_edit_url"
+                               id="v_edit_url"
+                               type="text"
+                               placeholder="Website"
+                               value="{{ venue.website }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <textarea class="venue-input" name="v_edit_address"
+                          id="v_edit_address"
+                          placeholder="Address"
+                          rows="4" cols="20">{{ venue.address }}
+        </textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <input class="venue-input"
+                               name="v_edit_admin"
+                               id="v_edit_admin"
+                               type="text"
+                               placeholder="Pastor or Principal name"
+                               value="{{ venue.admin_name if venue.admin_name != None }}">
+
+                        <input class="venue-input"
+                               name="v_edit_phone"
+                               id="v_edit_phone"
+                               type="text"
+                               placeholder="Phone number"
+                               value="{{ venue.phone }}">
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <input class="venue-input"
+                               name="v_edit_stream"
+                               id="v_edit_stream"
+                               type="text"
+                               placeholder="Livestream address"
+                               value="{{ venue.livestream if venue.livestream != None }}">
+
+
+                        <input class="venue-input"
+                               name="v_edit_picture"
+                               id="v_edit_picture"
+                               type="text"
+                               placeholder="Picture url"
+                               value="{{ venue.picture if venue.picture != None }}">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <textarea class="venue-input"
+                                  name="v_edit_summary"
+                                  id="v_edit_summary"
+                                  cols="30" rows="10"
+                                  title="Summary">{{ venue.summary if venue.summary != None }}
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+            <aside class="col-sm-4">
+                <img src="{{ pic }}" alt="">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        Service Times
+                    </div>
+                </div>
+            </aside>
+            <input id="venue_update_submit" type="submit" value="Update venue">
+
+        </form>
+
+    </div>
+
+
 {% endblock %}
 
-{% block content %}
-    <form action="">
-        {#    Select church or school for this #}
-        {#    Select subtype #}
-        <input id="v_edit_name" type="text" placeholder="Name" value="{{ venue.name }}"><br>
-        <input id="v_edit_url" type="text" placeholder="Website" value="{{ venue.website }}"><br>
-        <input id="v_edit_address" type="text" placeholder="Address" value=""><br>
-        <input id="v_edit_stream" type="text" placeholder="Livestream address" value=""><br>
-        <input id="v_edit_admin" type="text" placeholder="Pastor or Principal name" value=""><br>
-        <input id="v_edit_phone" type="text" placeholder="Phone number" value=""><br>
-        <input id="v_edit_picture" type="text" placeholder="Picture url" value=""><br>
-        <textarea name="v_edit_summary" id="v_edit_summary" cols="30" rows="10" title="Summary"></textarea>
-        <button>Update venue</button>
-    </form>
+{% block script_include %}
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSCuetIxeeLbIB3D8cpS93Cg8815CUrF4&v=3&libraries=places"></script>
+
+    <script>
+        var update = new UpdateVenue();
+        update.init();
+    </script>
 {% endblock %}

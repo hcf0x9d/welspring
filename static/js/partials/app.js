@@ -4,22 +4,34 @@
 // TODO: [Service Guide] -- Phase 1 is a listing with links to websites/contact, Phase 2 built out a bit more... (4)
 // TODO: [Banners] -- Consider banner ads for churches to post events, et cetera?  or businesses... (9)
 
-/**
- * Class for making a venue object
- *
- * @param obj - Google API object
- * @constructor
- */
-var Venue = function ( obj ) {
+var Model = function ( ) {
 
-    this.id = obj.place_id;
-    this.placeLoc = obj.geometry.location;
-    this.name = obj.name;
-    this.photos = obj.photos;
-    this.types = obj.types;
-    this.vicinity = obj.vicinity;
+        this.object = {}
 
-},
+    },
+    /**
+     * Class for making a venue object
+     *
+     * @param obj - Google API object
+     * @constructor
+     */
+    Venue = function ( obj ) {
+
+        this.google_id = obj.google_id;
+        this.id = obj.id;
+        this.phone = obj.phone;
+        this.address = obj.address;
+        this.admin_name = obj.admin_name;
+        this.livestream = obj.livestream;
+        this.placeLoc = JSON.parse( obj.location );
+        this.name = obj.name;
+        this.slug = obj.slug;
+        this.picture = obj.picture;
+        this.type_id = obj.type_id;
+        this.sub_type_id = obj.sub_type_id;
+        this.state = obj.state;
+
+    },
     /**
      * Welcome to the Google Maps portion of this, here's your class
      *
@@ -131,15 +143,32 @@ var Venue = function ( obj ) {
 
         function search () {
 
-            // Search for the places
-            service.nearbySearch( {
-                location : pyrmont,
-                radius   : 40000,
-                keyword  :'WELS Church',
-                // TODO: Replace the type with the url value
-                // either church, school or search for church by default
-                type     : [ 'church', ],
-            }, callback );
+            $.ajax( {
+                url      : '/api/venues',
+                type     : 'POST',
+                data     : { state : 'Washington', },
+                dataType : 'JSON',
+            } ).success( function ( results ) {
+
+                for( var i = 0; i < results.response.length; i++ ) {
+
+                    // Create a new instance of the Venue Class with this result
+                    var venue = new Venue( results.response[i] );
+
+                    // Add it to our array of venues
+                    venues.push( venue );
+
+                    createMarker( venue );
+
+                }
+
+                console.log( venues )
+
+            } ).error( function ( response ) {
+
+                console.log( response )
+
+            } );
 
         }
         /**
@@ -160,33 +189,6 @@ var Venue = function ( obj ) {
         }
 
         /**
-         * Search complete, do something with the results
-         * @param results
-         * @param status
-         */
-        function callback ( results, status ) {
-
-            if ( status === google.maps.places.PlacesServiceStatus.OK ) {
-
-                for( var i = 0; i < results.length; i++ ) {
-
-                    // Create a new instance of the Venue Class with this result
-                    var venue = new Venue( results[i] );
-
-                    // Add it to our array of venues
-                    venues.push( venue );
-
-                    createMarker( venue );
-
-                }
-
-                console.log( venues )
-
-            }
-
-        }
-
-        /**
          * Make the map marker
          * @param venue
          */
@@ -201,24 +203,12 @@ var Venue = function ( obj ) {
             google.maps.event.addListener( marker, 'click', function () {
 
                 var content,
-                    photo = '',
-                    type = [];
-
-                // Make the types legible and not in an array
-                for( var i = 0; i < venue.types.length; i++ ) {
-
-                    if ( venue.types[i] === 'church' || venue.types[i] === 'school' ) {
-
-                        type.push( venue.types[i] );
-
-                    }
-
-                }
+                    photo = '';
 
                 // If we have a photo, build the element to house it
-                if ( venue.photos !== undefined ) {
+                if ( venue.picture !== null ) {
 
-                    photo = '<img src="' + venue.photos[0].getUrl( { maxWidth : 200, maxHeight : 100, } ) +
+                    photo = '<img src="' + venue.picture +
                         '" alt="' + venue.name + '" height="100">';
 
                 }
@@ -230,9 +220,9 @@ var Venue = function ( obj ) {
                         '<h1>' + venue.name + '</h1>' +
                     '</header>' +
                     '<div>' +
-                        '<p>' + type.join( ', ' ) + '</p>' +
-                        '<p>' + venue.vicinity + '</p>' +
-                        '<button class="js-map-details" data-id="' + venue.id + '">' +
+                        '<p>' + venue.address + '</p>' +
+                        '<button class="js-map-details" data-id="' + venue.google_id + '" ' +
+                            'data-slug="' + venue.slug + '">' +
                             'More info' +
                         '</button>' +
                     '</div>';
@@ -242,7 +232,7 @@ var Venue = function ( obj ) {
 
                 $( '.js-map-details' ).on( 'click', function () {
 
-                    getDetails( $( this ).data( 'id' ) );
+                    getDetails( $( this ).data( 'id' ), $( this ).data( 'slug' ) );
 
                 } );
 
@@ -250,22 +240,66 @@ var Venue = function ( obj ) {
 
         }
 
-        function getDetails ( id ) {
+        function getDetails ( id, slug ) {
 
             // window.location.href = '/locator/site/' + id;
             $.ajax( {
                 url      : '/api/place_details',
                 type     : 'POST',
-                data     : { id : id, },
+                data     : { id : id, slug : slug, },
                 dataType : 'JSON',
             } ).success( function ( obj ) {
 
-                $( 'body' ).append( '<div id="response"></div>' );
-                $( '#response' ).text( JSON.stringify( obj.response ) );
+                infowindow.close();
+
+                detailModal ( obj );
 
             } ).error( function ( response ) {
 
                 console.log( response )
+
+            } );
+
+        }
+
+        function detailModal ( obj ) {
+
+            var $el = $( '.location-detail' ),
+                gmap = obj.gmaps,
+                welspring = obj.welspring;
+
+            $( 'body' ).append( '<div class="shade"></div>' );
+
+            console.log( gmap )
+
+            // FIXME: This should be replaced with a better mechanism
+            $el.find( '.location-header' ).css( 'background-image', 'url(' + welspring.picture + ')' );
+            $el.find( '#locationName' ).html( welspring.name );
+            $el.find( '#locationAddress' ).html( welspring.address );
+            $el.find( '#locationSummary' ).html( welspring.summary );
+            $el.find( '#locationLinkBtn' ).attr( 'href', welspring.website );
+            $el.find( '#locationWebsite' ).attr( 'href', welspring.website )
+                .text( welspring.website );
+            $el.find( '#locationPhone' ).text( welspring.phone );
+            $el.find( '#locationAdmin' ).text( welspring.admin );
+
+            $( '.shade' ).fadeIn( 250, function () {
+
+                $el.fadeIn( 250 );
+
+            } );
+
+            $( '.location-detail-close' ).on( 'click', function () {
+
+                $( '.location-detail' ).fadeOut( 250, function () {
+
+                    $( '.shade' ).fadeOut( 250, function () {
+
+                        $( this ).remove();
+
+                    } )
+
+                } );
 
             } );
 
@@ -281,21 +315,9 @@ var Venue = function ( obj ) {
 MapBuilder.prototype.error = function ( response ) {
 
         // TODO: Need to handle this I guess.
-        return response
+        return response;
 
     };
-
-// function getUrlParameter ( name ) {
-//
-//     var regex, results;
-//
-//     name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
-//     regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-//     results = regex.exec( window.location.search );
-//     return results === null ? '' : decodeURIComponent( results[1].replace( /\+/g, ' ' ) );
-//
-// }
-
 
 /**
  * Add New Item Class Constructor
@@ -310,108 +332,145 @@ function AddNewVenue () {
 
     var _this = this;
 
+    _this.address = null;
+    _this.input = document.getElementById( 'venue_name' )
     _this.startButton = document.querySelector( '.js-new-venue' );
 
     /**
-     * All Add New Item events can be handled here
+     * Inastead of requiring input, we can grab a lot from Google
      */
-    _this.handleEvents = function () {
+    _this.autocomplete = function () {
 
-        // Be able to open the lightbox
-        _this.startButton.addEventListener( 'click', function () {
+        var input = document.getElementById( 'venue_name' ),
+            autocomplete = new google.maps.places.Autocomplete( input );
 
-            var action = 'open';
+        autocomplete.setComponentRestrictions(
+        { country : [ 'us', ], } );
 
-            _this.popWrap( action );
+        autocomplete.addListener( 'place_changed', function () {
 
-        } );
+            var place = autocomplete.getPlace(),
+                obj = {},
+                loc = {
+                    lat : place.geometry.location.lat(),
+                    lng : place.geometry.location.lng(),
+                };
 
-    };
+            obj.name = place.name;
+            obj.website = place.website;
+            obj.address = place.adr_address;
+            obj.google_id = place.place_id;
+            obj.phone = place.formatted_phone_number;
+            // language=JSRegexp
+            obj.slug = place.name.replace( /[^A-Za-z0-9]+/g, "-" ).toLowerCase();
+            obj.location = JSON.stringify( loc );
 
-    /**
-     * Lightbox handling events
-     *
-     * @param action - String :: what do you want to do?
-     */
-    _this.popWrap = function ( action ) {
+            $.ajax( {
+                url  : '/create/venue',
+                type : 'POST',
+                data : obj,
+            } )
+            .done( function ( response ) {
 
-        if ( action === 'destroy' ) {
+                response = JSON.parse( response );
+                console.log( response );
+                window.location.reload();
 
-            // Destroy the modal
-            $( _this.inputWrap ).slideUp( 250 );
+            } )
+            .fail( function () {
 
-        } else {
-
-            swal( {
-                title : 'Name your category',
-                type : 'question',
-                html : '<input type="text" class="swal2-input" ' +
-                                'placeholder="Church or School name" ' +
-                                'id="venue_name">' +
-                    '<input type="text" class="swal2-input" ' +
-                                'placeholder="Website" ' +
-                                'id="venue_website">',
-                showCancelButton : true,
-                confirmButtonText : 'Submit',
-                showLoaderOnConfirm : true,
-                preConfirm : function ( text ) {
-
-                    return new Promise ( function ( resolve, reject ) {
-
-                        resolve( {
-
-                            name    : $( '#venue_name' ).val(),
-                            slug    : $( '#venue_name' ).val()
-                                .replace( /[^A-Za-z0-9]+/g, "-" ).toLowerCase(),
-                            website : $( '#venue_website' ).val(),
-
-                        } );
-
-                    } )
-
-                },
-                allowOutsideClick : false,
-            } ).then( function ( result ) {
-
-                $.ajax( {
-                    url  : '/create/venue',
-                    type : 'POST',
-                    data : result,
-                } )
-                .done( function ( response ) {
-
-                    response = JSON.parse( response );
-
-                    window.location.href = '/manage/venues/' + response.post.slug
-
-                } )
-                .fail( function () {
-
-                    swal( 'Oops...', 'Something went wrong with ajax!', 'error' );
-
-                } );
+                swal( 'Oops...', 'Something went wrong with ajax!', 'error' );
 
             } );
 
-        }
+        } );
 
-    };
+    }
 
-    _this.submitCategory = function ( ) {
+    // Kick off the handler
+    _this.autocomplete();
 
-        var obj = {};
+}
 
-        obj.name = $( '#newCategoryNameInput' ).val();
-        obj.slug = obj.name.replace( /[^A-Za-z0-9]+/g, "-" ).toLowerCase()
+function UpdateVenue () {
+
+    var _this = this;
+
+    _this.init = function () {
+
+        $( '.js-radio' ).on( 'change', function ( e ) {
+
+            $.ajax( {
+                url  : '/api/getVenueSubTypes',
+                type : 'POST',
+                data : { id : this.value, },
+            } )
+            .done( function ( response ) {
+
+                var opts, keys,
+                    options = '<option value="">Select an option</option>';
+
+                response = JSON.parse( response );
+                opts = response.response;
+
+                keys = Object.keys( opts );
+
+                for( i = 0; i < keys.length; i++ ) {
+
+                    options += '<option value="' + opts[keys[i]] + '">' + keys[i] + '</option>';
+
+                }
+
+                $( '#v_edit_subtype' ).empty().append( options );
+
+                _this.edit();
+
+            } )
+            .fail( function () {
+
+                swal( 'Oops...', 'Something went wrong with ajax!', 'error' );
+
+            } );
+
+        } );
+
+        $( 'select.venue-input' ).on( 'change', function () {
+
+            // console.log( $( this ).find( 'option:selected' ).val() )
+
+            _this.edit()
+
+        } )
+
+    }
+
+    _this.change = function () {
+
+        $( '.venue-input' ).on( 'change', function ( e ) {
+
+            e.preventDefault();
+
+            _this.edit();
+
+        } );
+
+    }
+
+    _this.edit = function () {
+
+        var form = objectifyForm( $( '#venue_update_form' ).serializeArray() );
+
+        console.log( form );
 
         $.ajax( {
-            url  : '/addCategory',
+            url  : '/update/venue',
             type : 'POST',
-            data : obj,
+            data : form,
         } )
-        .done( function () {
+        .done( function ( response ) {
 
-            window.location.reload();
+            // TODO: Notice that says "this has happened"
+            console.log( response )
 
         } )
         .fail( function () {
@@ -420,9 +479,18 @@ function AddNewVenue () {
 
         } );
 
-    };
+    }
 
-    // Kick off the handler
-    _this.handleEvents();
+}
+
+function objectifyForm ( formArray ) {
+
+    var returnArray = {};
+    for( var i = 0; i < formArray.length; i++ ) {
+
+        returnArray[formArray[ i ].name ] = formArray[ i ].value;
+
+    }
+    return returnArray;
 
 }
