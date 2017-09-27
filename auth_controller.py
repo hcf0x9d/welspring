@@ -55,7 +55,6 @@ class Authentication:
         response = h.request(url, 'GET')[1]
         str_response = response.decode('utf-8')
         result = json.loads(str_response)
-
         # If there was an error in the access token info, abort.
         if result.get('error') is not None:
             response = make_response(json.dumps(result.get('error')), 500)
@@ -64,6 +63,7 @@ class Authentication:
 
         # Verify that the access token is used for the intended user.
         gplus_id = credentials.id_token['sub']
+
         if result['user_id'] != gplus_id:
             response = make_response(
                 json.dumps("Token's user ID doesn't match given user ID."), 401)
@@ -79,12 +79,16 @@ class Authentication:
 
         stored_access_token = login_session.get('access_token')
         stored_gplus_id = login_session.get('gplus_id')
+
         if stored_access_token is not None and gplus_id == stored_gplus_id:
+
+            connuser = db.read_user(login_session)
+            login_session['user_type_id'] = connuser['user_type_id']
             response = make_response(
                 json.dumps('Current user is already connected.'), 200)
             response.headers['Content-Type'] = 'application/json'
             return response
-
+        print('still going?')
         # Store the access token in the session for later use.
         login_session['access_token'] = access_token
         login_session['gplus_id'] = gplus_id
@@ -102,10 +106,14 @@ class Authentication:
 
         # see if user exists, if it doesn't make a new one
         user_id = db.read_user(login_session)
+        print('')
+        print(user_id)
 
         if not user_id.id:
+            print(user_id)
             user_id = db.create_user(login_session)
         login_session['user_id'] = user_id.id
+        login_session['user_type_id'] = user_id.user_type_id
 
         output = '<h1>redirecting...</h1>'
         flash("you are now logged in as %s" % login_session['name'], 'success')

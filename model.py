@@ -38,6 +38,13 @@ class Data(Base):
         }
 
 
+class UserType(Base):
+    __tablename__ = 'user_type'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -46,6 +53,8 @@ class User(Base):
     email = Column(String(250), nullable=False, index=True)
     picture = Column(String(250))
     password_hash = Column(String(64))
+    user_type_id = Column(Integer, ForeignKey('user_type.id'), default=1)
+    user_venue_type = relationship(UserType)
 
     # @staticmethod
     # def verify_auth_token(token):

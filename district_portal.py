@@ -58,9 +58,13 @@ nav.Bar('top', [
 ])
 
 nav.Bar('admin', [
-    nav.Item('Venues', 'venue_manager')
+    nav.Item('Venues', 'venue_manager',
+             html_attrs={'class': ['target']}),
+    nav.Item('Something', 'connector_manager',
+             html_attrs={'class': ['target']}),
+    nav.Item('something else', 'connector_manager',
+             html_attrs={'class': ['target']})
 ])
-
 
 
 def login_required(f):
@@ -73,6 +77,19 @@ def login_required(f):
     return decorated_function
 
 
+def check_credentials(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if login_session.get('user_id') is not None:
+            user_check = db.read_user(login_session)
+
+            login_session['user_type_id'] = user_check.user_type_id
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 # ==============================================================================
 # Routes
 
@@ -81,7 +98,6 @@ def login_required(f):
 def login_controller():
     """Create an anti-forgery state token to assist security"""
     auth.create_session()
-    print(login_session)
     return render_template('login.html', STATE=login_session['state'])
 
 
@@ -92,6 +108,7 @@ def logout_controller():
 
 
 @app.route('/')
+@check_credentials
 def home_controller():
     """Build and render the home page
 
@@ -101,26 +118,26 @@ def home_controller():
     t = twitter.get_tweets('welstweets', 2)
 
     return render_template('index.html', verse_of_day=returned_feed,
-                           tweets=t)
+                           tweets=t, user=login_session)
 
 
 # TODO: [Views] Locator
 @app.route('/locator')
 def locator_controller():
-    return render_template('locator.html')
+    return render_template('locator.html', user=login_session)
 
 
 # TODO: [Views] Locator
 @app.route('/locator/<string:search_type>')
 def type_locator_controller(search_type):
     print(search_type)
-    return render_template('locator.html', term=search_type)
+    return render_template('locator.html', term=search_type, user=login_session)
 
 
 # TODO: [Views] Connector
 @app.route('/connect')
 def connector_controller():
-    return render_template('connector.html')
+    return render_template('connector.html', user=login_session)
 
 
 @app.route('/grow/devotion')
@@ -134,7 +151,8 @@ def devotion_controller():
     """
     returned_feed = FeedReader('devotion').start()
     t = twitter.get_tweets('welstweets', 2)
-    return render_template('devotion.html', devotion=returned_feed, tweets=t)
+    return render_template('devotion.html', devotion=returned_feed, tweets=t,
+                           user=login_session)
 
 
 # TODO: [Views] About the welspring
@@ -172,12 +190,8 @@ def connector_editor(connector_slug):
 def venue_manager():
     venues = db.read_venue_list()
 
-    school_checked = ''
-    church_checked = ''
-
     return render_template('admin/venues.html', venues=venues,
-                           school_checked=school_checked,
-                           church_cheched=church_checked)
+                           user=login_session)
 
 
 @app.route('/manage/venues/<string:venue_slug>')
@@ -215,6 +229,7 @@ def venue_editor(venue_slug):
     return render_template('admin/venue.html', venue=venue,
                            sch_chkd=school_checked,
                            cch_chkd=church_checked,
+                           user=login_session,
                            subtype_dd=sub_dd,
                            pic=picture)
 
@@ -296,7 +311,8 @@ def geocode_query():
 @app.route('/api/venues', methods=['POST'])
 def api_venue_list():
     print('venue list')
-    list = db.read_venue_list_by_search(request.form['state'])
+    list = db.read_venue_list_by_search(request.form['state'],
+                                        request.form['type'])
 
     return json.dumps({'status': 'OK',
                        'response': [venue.serialize for venue in list]})

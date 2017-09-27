@@ -2,22 +2,6 @@
 
 {% block content %}
 
-    <ul class="admin-nav">
-        {% for item in nav.admin %}
-        <li class="{{ 'active' if item.is_active else '' }}">
-            {{ item }}
-            {% if item.items %}
-            <ul>
-                {% for child in item.items %}
-                <li class="{{ 'active' if child.is_active else '' }}">
-                {{ child }}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
 
 
     {% block admin_view %}

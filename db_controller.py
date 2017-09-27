@@ -3,7 +3,7 @@ import re
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from model import Base, Data, User, Venue, VenueSubType, VenueType
+from model import Base, Data, User, UserType, Venue, VenueSubType, VenueType
 
 engine = create_engine('postgresql://welspring:password@localhost:5432'
                        '/welspring')
@@ -26,8 +26,9 @@ class DatabaseController:
     def read_user(self, auth_session):
         try:
             user = session.query(User)\
-                .filter_by(email=auth_session['email']).one()
-            return user
+                .filter_by(email=auth_session['email']).all()
+
+            return user[0]
         except:
             self.create_user(auth_session)
             return session.query(User)\
@@ -44,19 +45,37 @@ class DatabaseController:
 
     @staticmethod
     def read_venue_list():
-        venues = session.query(Venue).all()
+        venues = session.query(VenueType, Venue, VenueSubType) \
+            .outerjoin(Venue, VenueType.id == Venue.type_id) \
+            .outerjoin(VenueSubType, VenueSubType.id == Venue.sub_type_id)\
+            .order_by(VenueType.name, Venue.name).all()
+
+        for venue in venues:
+            print(venue)
         return venues
 
     @staticmethod
-    def read_venue_list_by_search(state):
-        venues = session.query(Venue).filter_by(state=state).all()
+    def read_venue_list_by_search(state, type):
+        if type == 'church':
+            type_id = 2
+        else:
+            type_id = 1
+
+        venues = session.query(Venue)\
+            .filter_by(state=state, type_id=type_id).all()
         return venues
 
     @staticmethod
     def create_venue(obj):
+
+        if hasattr(obj, 'website'):
+            website = obj['website']
+        else:
+            website = None
+
         new_venue = Venue(name=obj['name'],
                           slug=obj['slug'],
-                          website=obj['website'],
+                          website=website,
                           address=obj['address'],
                           google_id=obj['google_id'],
                           location=obj['location'],

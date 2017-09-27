@@ -1,5 +1,22 @@
 @import "_inputs.scss";
 
+.profile-link {
+  display: block;
+  background: $color-featherlght;
+  text-align: left;
+
+  & .img {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  & .text {
+    vertical-align: middle;
+    color: $color-grey-4;
+  }
+}
+
 .btn {
   border-radius: 0.25em;
   display: inline-block;
@@ -152,6 +169,73 @@
   -ms-transition: opacity 0.2s ease;
   -o-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
+}
+
+
+.venueTiles {
+  display: inline-block;
+  margin-top: 2em;
+  list-style-type: none;
+
+  & .tile-target {
+    display: block;
+    box-sizing: content-box;
+    font: normal 300 1.25em/1.65em $font-sans;
+
+    & .text {
+      vertical-align: middle;
+    }
+    & .type-badge {
+      padding: 5px 10px;
+      font: normal 700 0.65em/1 $font-sans;
+      border-radius: 5px;
+      width: 11em;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      display: inline-block;
+      text-align: center;
+
+      &.mod-els {
+        background: $color-country;
+        color: $color-white;
+      }
+      &.mod-wels {
+        background: $color-dash;
+        color: $color-white;
+      }
+
+      &.mod-preschool {
+        background: $color-pinky;
+        color: $color-white;
+      }
+
+      &.mod-elementary {
+        background: $color-peach;
+        color: $color-white;
+
+      }
+
+      &.mod-high {
+        background: $color-mac;
+        color: $color-white;
+      }
+    }
+  }
+}
+
+.search-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 1em;
+
+  & input {
+    font: normal 300 1.25em/2em $font-sans;
+    border: none;
+    padding: 0 10px;
+    width: 20em;
+  }
 }
 
 @include media("<sm") {
